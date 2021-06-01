@@ -1722,16 +1722,19 @@ class BertForTokenClassification(BertPreTrainedModel):
     BERT_START_DOCSTRING,
 )
 class BertForQuestionAnswering(BertPreTrainedModel):
+
+    _keys_to_ignore_on_load_unexpected = [r"pooler"]
+
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
 
-        self.bert = BertModel(config)
+        self.bert = BertModel(config, add_pooling_layer=False)
         self.qa_outputs = nn.Linear(config.hidden_size, config.num_labels)
 
         self.init_weights()
 
-    @add_start_docstrings_to_callable(BERT_INPUTS_DOCSTRING.format("(batch_size, sequence_length)"))
+    @add_start_docstrings_to_model_forward(BERT_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
         checkpoint="bert-base-uncased",
@@ -1755,18 +1758,20 @@ class BertForQuestionAnswering(BertPreTrainedModel):
         r"""
         start_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
             Labels for position (index) of the start of the labelled span for computing the token classification loss.
-            Positions are clamped to the length of the sequence (`sequence_length`).
-            Position outside of the sequence are not taken into account for computing the loss.
+            Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
+            sequence are not taken into account for computing the loss.
         end_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
             Labels for position (index) of the end of the labelled span for computing the token classification loss.
-            Positions are clamped to the length of the sequence (`sequence_length`).
-            Position outside of the sequence are not taken into account for computing the loss.
+            Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
+            sequence are not taken into account for computing the loss.
         """
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
         from transformers import AutoTokenizer
         tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-        tokens = [(index, x) for index, x in enumerate(tokenizer.convert_ids_to_tokens(input_ids[0])) if x
-                  != tokenizer.pad_token]
+        tokens = [(index, x) for index, x in enumerate(tokenizer.convert_ids_to_tokens(input_ids[0])) if x !=
+                  tokenizer.pad_token]
+
         outputs = self.bert(
             input_ids,
             attention_mask=attention_mask,
@@ -1788,6 +1793,8 @@ class BertForQuestionAnswering(BertPreTrainedModel):
 
         for start_logit, end_logit, (index, x) in zip(start_logits[0], end_logits[0], tokens):
             print(start_logit, end_logit, index, x)
+
+
         total_loss = None
         if start_positions is not None and end_positions is not None:
             # If we are on multi-GPU, split add a dimension
