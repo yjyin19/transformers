@@ -381,6 +381,8 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
+                            "start_logits": start_l,
+                            "end_logdits": end_l,
                             "start": enc.word_to_chars(
                                 enc.token_to_word(s), sequence_index=1 if question_first else 0
                             )[0],
