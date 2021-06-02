@@ -329,9 +329,10 @@ class QuestionAnsweringPipeline(Pipeline):
                 undesired_tokens_mask = undesired_tokens == 0.0
 
                 print("input_ids", feature.input_ids)
-                print("start_position", feature.start_position)
-                print("end_position", feature.end_position)
-                print("map", feature.token_to_orig_map)
+                print("attention_mask", feature.attention_mask)
+                print("token_type_ids", feature.token_type_ids)
+                print("p_mask", feature.p_mask)
+                print("encoding", feature.encoding)
 
 
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
