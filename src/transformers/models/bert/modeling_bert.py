@@ -1767,11 +1767,6 @@ class BertForQuestionAnswering(BertPreTrainedModel):
         """
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        from transformers import AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-        tokens = [(index, x) for index, x in enumerate(tokenizer.convert_ids_to_tokens(input_ids[0])) if x !=
-                  tokenizer.pad_token]
-
         outputs = self.bert(
             input_ids,
             attention_mask=attention_mask,
@@ -1790,10 +1785,6 @@ class BertForQuestionAnswering(BertPreTrainedModel):
         start_logits, end_logits = logits.split(1, dim=-1)
         start_logits = start_logits.squeeze(-1)
         end_logits = end_logits.squeeze(-1)
-
-        for start_logit, end_logit, (index, x) in zip(start_logits[0], end_logits[0], tokens):
-            print(start_logit, end_logit, index, x)
-
 
         total_loss = None
         if start_positions is not None and end_positions is not None:
