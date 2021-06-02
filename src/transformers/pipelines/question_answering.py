@@ -328,16 +328,9 @@ class QuestionAnsweringPipeline(Pipeline):
                 # Generate mask
                 undesired_tokens_mask = undesired_tokens == 0.0
 
-                print("input_ids", feature.input_ids)
-                print("attention_mask", feature.attention_mask)
-                print("token_type_ids", feature.token_type_ids)
-                print("p_mask", feature.p_mask)
-                print("encoding", feature.encoding)
-
-
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
-                start_l = np.where(undesired_tokens_mask, -10000.0, start_l)
-                end_l = np.where(undesired_tokens_mask, -10000.0, end_l)
+                start_ = np.where(undesired_tokens_mask, -10000.0, start_l)
+                end_ = np.where(undesired_tokens_mask, -10000.0, end_l)
 
                 # Normalize logits and spans to retrieve the answer
                 start_ = np.exp(start_l - np.log(np.sum(np.exp(start_l), axis=-1, keepdims=True)))
@@ -354,6 +347,9 @@ class QuestionAnsweringPipeline(Pipeline):
                 )
                 if not self.tokenizer.is_fast:
                     char_to_word = np.array(example.char_to_word_offset)
+                    print(char_to_word)
+                    for s, e, score in zip(starts, ends, scores):
+                        print(feature.token_to_orig_map[s][0])
 
                     # Convert the answer (tokens) back to the original text
                     # Score: score from the model
