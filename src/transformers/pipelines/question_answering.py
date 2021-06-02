@@ -347,9 +347,6 @@ class QuestionAnsweringPipeline(Pipeline):
                 )
                 if not self.tokenizer.is_fast:
                     char_to_word = np.array(example.char_to_word_offset)
-                    print(char_to_word)
-                    for s, e, score in zip(starts, ends, scores):
-                        print(feature.token_to_orig_map[s][0])
 
                     # Convert the answer (tokens) back to the original text
                     # Score: score from the model
@@ -359,6 +356,8 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
+                            "start_logits":, start_l[s]
+                            "end_logits":, end_l[e]
                             "start": np.where(char_to_word == feature.token_to_orig_map[s])[0][0].item(),
                             "end": np.where(char_to_word == feature.token_to_orig_map[e])[0][-1].item(),
                             "answer": " ".join(
@@ -377,10 +376,6 @@ class QuestionAnsweringPipeline(Pipeline):
                     enc = feature.encoding
 
                     for s, e, score in zip(starts, ends, scores):
-                        print("s", s)
-                        print("e", e)
-                        print('enc.token_to_word(s)', enc.token_to_word(s))
-                        print('enc.token_to_word(e)', enc.token_to_word(e))
 
                     # Sometimes the max probability token is in the middle of a word so:
                     # - we start by finding the right word containing the token with `token_to_word`
@@ -388,8 +383,8 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
-                            "start_logits": start_l,
-                            "end_logdits": end_l,
+                            "start_logits": start_l[s],
+                            "end_logits": end_l[e],
                             "start": enc.word_to_chars(
                                 enc.token_to_word(s), sequence_index=1 if question_first else 0
                             )[0],
