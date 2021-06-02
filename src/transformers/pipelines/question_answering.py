@@ -356,7 +356,7 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
-                            "start_logits":, start_l[s]
+                            "start_logits": start_l[s]
                             "end_logits":, end_l[e]
                             "start": np.where(char_to_word == feature.token_to_orig_map[s])[0][0].item(),
                             "end": np.where(char_to_word == feature.token_to_orig_map[e])[0][-1].item(),
