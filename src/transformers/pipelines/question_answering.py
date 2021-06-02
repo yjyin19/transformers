@@ -332,6 +332,7 @@ class QuestionAnsweringPipeline(Pipeline):
                 start_l = np.where(undesired_tokens_mask, -10000.0, start_l)
                 end_l = np.where(undesired_tokens_mask, -10000.0, end_l)
                 print("start_l": start_l)
+                print("anything")
 
                 # Normalize logits and spans to retrieve the answer
                 start_ = np.exp(start_l - np.log(np.sum(np.exp(start_l), axis=-1, keepdims=True)))
