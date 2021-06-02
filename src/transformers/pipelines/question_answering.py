@@ -328,6 +328,8 @@ class QuestionAnsweringPipeline(Pipeline):
                 # Generate mask
                 undesired_tokens_mask = undesired_tokens == 0.0
 
+                print(start_l)
+
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
                 start_l = np.where(undesired_tokens_mask, -10000.0, start_l)
                 end_l = np.where(undesired_tokens_mask, -10000.0, end_l)
@@ -356,8 +358,6 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
-                            "start_logits": start_l,
-                            "end_logdits": end_l,
                             "start": np.where(char_to_word == feature.token_to_orig_map[s])[0][0].item(),
                             "end": np.where(char_to_word == feature.token_to_orig_map[e])[0][-1].item(),
                             "answer": " ".join(
