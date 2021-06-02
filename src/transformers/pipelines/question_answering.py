@@ -329,12 +329,12 @@ class QuestionAnsweringPipeline(Pipeline):
                 undesired_tokens_mask = undesired_tokens == 0.0
 
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
-                start_ = np.where(undesired_tokens_mask, -10000.0, start_)
-                end_ = np.where(undesired_tokens_mask, -10000.0, end_)
+                start_l = np.where(undesired_tokens_mask, -10000.0, start_)
+                end_l = np.where(undesired_tokens_mask, -10000.0, end_)
 
                 # Normalize logits and spans to retrieve the answer
-                start_ = np.exp(start_ - np.log(np.sum(np.exp(start_), axis=-1, keepdims=True)))
-                end_ = np.exp(end_ - np.log(np.sum(np.exp(end_), axis=-1, keepdims=True)))
+                start_ = np.exp(start_l - np.log(np.sum(np.exp(start_l), axis=-1, keepdims=True)))
+                end_ = np.exp(end_l - np.log(np.sum(np.exp(end_l), axis=-1, keepdims=True)))
 
                 if kwargs["handle_impossible_answer"]:
                     min_null_score = min(min_null_score, (start_[0] * end_[0]).item())
@@ -356,6 +356,8 @@ class QuestionAnsweringPipeline(Pipeline):
                     answers += [
                         {
                             "score": score.item(),
+                            "start_logits": start_l,
+                            "end_logdits": end_l,
                             "start": np.where(char_to_word == feature.token_to_orig_map[s])[0][0].item(),
                             "end": np.where(char_to_word == feature.token_to_orig_map[e])[0][-1].item(),
                             "answer": " ".join(
