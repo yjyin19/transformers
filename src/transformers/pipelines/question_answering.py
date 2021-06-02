@@ -375,8 +375,6 @@ class QuestionAnsweringPipeline(Pipeline):
                     question_first = bool(self.tokenizer.padding_side == "right")
                     enc = feature.encoding
 
-                    for s, e, score in zip(starts, ends, scores):
-
                     # Sometimes the max probability token is in the middle of a word so:
                     # - we start by finding the right word containing the token with `token_to_word`
                     # - then we convert this word in a character span with `word_to_chars`
