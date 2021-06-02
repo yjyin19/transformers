@@ -321,7 +321,7 @@ class QuestionAnsweringPipeline(Pipeline):
 
             min_null_score = 1000000  # large and positive
             answers = []
-            for (feature, start_, end_) in zip(features, start, end):
+            for (feature, start_l, end_l) in zip(features, start, end):
                 # Ensure padded tokens & question tokens cannot belong to the set of candidate answers.
                 undesired_tokens = np.abs(np.array(feature.p_mask) - 1) & feature.attention_mask
 
@@ -329,8 +329,8 @@ class QuestionAnsweringPipeline(Pipeline):
                 undesired_tokens_mask = undesired_tokens == 0.0
 
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
-                start_l = np.where(undesired_tokens_mask, -10000.0, start_)
-                end_l = np.where(undesired_tokens_mask, -10000.0, end_)
+                start_l = np.where(undesired_tokens_mask, -10000.0, start_l)
+                end_l = np.where(undesired_tokens_mask, -10000.0, end_l)
 
                 # Normalize logits and spans to retrieve the answer
                 start_ = np.exp(start_l - np.log(np.sum(np.exp(start_l), axis=-1, keepdims=True)))
