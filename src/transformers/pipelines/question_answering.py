@@ -331,7 +331,7 @@ class QuestionAnsweringPipeline(Pipeline):
                 print("input_ids", feature.input_ids)
                 print("start_position", feature.start_position)
                 print("end_position", feature.end_position)
-                print("map", token_to_orig_map)
+                print("map", feature.token_to_orig_map)
 
 
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
