@@ -328,7 +328,11 @@ class QuestionAnsweringPipeline(Pipeline):
                 # Generate mask
                 undesired_tokens_mask = undesired_tokens == 0.0
 
-                print("startl",start_l)
+                print("input_ids", feature.input_ids)
+                print("start_position", feature.start_position)
+                print("end_position", feature_end_position)
+                print("map", token_to_orig_map)
+
 
                 # Make sure non-context indexes in the tensor cannot contribute to the softmax
                 start_l = np.where(undesired_tokens_mask, -10000.0, start_l)
