@@ -377,6 +377,8 @@ class QuestionAnsweringPipeline(Pipeline):
                     enc = feature.encoding
 
                     for s, e, score in zip(starts, ends, scores):
+                        print("s", s)
+                        print("e", e)
                         print('enc.token_to_word(s)', enc.token_to_word(s))
                         print('enc.token_to_word(e)', enc.token_to_word(e))
 
