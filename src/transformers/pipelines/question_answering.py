@@ -330,7 +330,7 @@ class QuestionAnsweringPipeline(Pipeline):
 
                 print("input_ids", feature.input_ids)
                 print("start_position", feature.start_position)
-                print("end_position", feature_end_position)
+                print("end_position", feature.end_position)
                 print("map", token_to_orig_map)
 
 
